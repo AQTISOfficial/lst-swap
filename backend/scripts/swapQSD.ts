@@ -11,7 +11,7 @@ async function main() {
   const user = signer.address;
   const amount = BigInt(AMOUNT_TO_SWAP);
 
-  console.log(`🔍 Checking QSD allowance for ${user}...`);
+  console.log(`Checking QSD allowance for ${user}...`);
 
   const erc20Abi = [
     "function allowance(address owner, address spender) view returns (uint256)",
@@ -26,8 +26,8 @@ async function main() {
   const allowance: bigint = await token.allowance(user, SWAP_CONTRACT);
 
   if (allowance < amount) {
-    console.log(`❌ Insufficient QSD allowance: allowed = ${allowance}, needed = ${amount}`);
-    console.log(`👉 Please approve more QSD before swapping.`);
+    console.log(`Insufficient QSD allowance: allowed = ${allowance}, needed = ${amount}`);
+    console.log(`Please approve more QSD before swapping.`);
     return;
   }
 
@@ -35,7 +35,7 @@ async function main() {
   console.log("⏳ Swapping QSD...");
   await tx.wait();
 
-  console.log(`✅ Swapped ${AMOUNT_TO_SWAP} QSD for USDC`);
+  console.log(`Swapped ${AMOUNT_TO_SWAP} QSD for USDC`);
 }
 
 main().catch((err) => {
