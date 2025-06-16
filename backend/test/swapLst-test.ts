@@ -67,6 +67,17 @@ describe("SwapLst", function () {
       .to.be.revertedWithCustomError(swapLst, "ExceedsAllowance");
   });
 
+   it("should compare gas usage of swapQSD", async function () {
+    await swapLst.connect(owner).setSnapshotQSD([user.address], [ethers.parseUnits("500", 6)]);
+    const tx = await swapLst.connect(user).swapQSD(ethers.parseUnits("500", 6));
+    const receipt = await tx.wait();
+    if (receipt) {
+      console.log("Gas used:", receipt.gasUsed.toString());
+    } else {
+      console.log("Transaction receipt is null");
+    }
+  });
+
   // QRT swap tests
   it("should set snapshot for QRT", async () => {
     await swapLst.connect(owner).setSnapshotQRT([user.address], [ethers.parseUnits("500", 6)]);
