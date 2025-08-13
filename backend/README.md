@@ -1,13 +1,32 @@
-# Sample Hardhat Project
+# AITA LST Swap Backend
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project contains the backend services for the LST Swap platform. It includes smart contracts, deployment scripts, and testing utilities.
 
-Try running some of the following tasks:
+## Getting Started
+
+Install dependencies:
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+npm install
 ```
+
+Run tests:
+
+```shell
+npx hardhat test
+```
+
+Deploy contracts locally:
+
+```shell
+npx hardhat node
+npx hardhat run scripts/deploy.ts --network localhost
+```
+
+## Project Structure
+
+- `contracts/` – Smart contracts
+- `scripts/` – Deployment and utility scripts
+- `test/` – Test cases
+
+Refer to the documentation for more details on usage and configuration.
