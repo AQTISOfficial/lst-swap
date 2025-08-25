@@ -29,3 +29,6 @@ export default config;
 
 // npx hardhat ignition deploy ignition/modules/SwapLstModule.ts --network sepolia --verify
 // npx hardhat ignition deploy ignition/modules/SwapLstModule.ts --network mainnet --verify
+
+// npx hardhat ignition deploy ignition/modules/DepositLstModule.ts --network sepolia --verify
+// npx hardhat ignition deploy ignition/modules/DepositLstModule.ts --network mainnet --verify

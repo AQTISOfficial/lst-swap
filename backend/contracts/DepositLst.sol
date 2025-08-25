@@ -6,34 +6,29 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract SwapLst is Pausable, Ownable {
+contract DepositLst is Pausable, Ownable {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable QSD;
     IERC20 public immutable QRT;
-    IERC20 public immutable USDC;
-
-    uint256 public constant QSD_RATE = 9e5; // 0.9 USDC per QSD
-    uint256 public constant QRT_RATE = 7e6; // 7.0 USDC per QRT
 
     mapping(address => uint256) public allowedQSD;
     mapping(address => uint256) public allowedQRT;
 
-    mapping(address => uint256) public swappedQSD;
-    mapping(address => uint256) public swappedQRT;
+    mapping(address => uint256) public depositedQSD;
+    mapping(address => uint256) public depositedQRT;
 
-    event Swapped(address indexed user, string token, uint256 amountIn, uint256 amountOut, uint256 timestamp);
+    event Deposited(address indexed user, string token, uint256 amount, uint256 timestamp);
     event SnapshotSet(address indexed user, string token, uint256 allowedAmount, uint256 timestamp);
 
     error LengthMismatch();
     error InvalidAmount();
     error ExceedsAllowance();
 
-    constructor(address _qsd, address _qrt, address _usdc) Ownable(msg.sender) 
+    constructor(address _qsd, address _qrt) Ownable(msg.sender) 
     {
         QSD = IERC20(_qsd);
         QRT = IERC20(_qrt);
-        USDC = IERC20(_usdc);
     }
 
    function pause() public onlyOwner {
@@ -60,43 +55,46 @@ contract SwapLst is Pausable, Ownable {
         }
     }
 
-    function swapQSD(uint256 amount) external whenNotPaused {
+    function depositQSD(uint256 amount) external whenNotPaused {
        if (amount == 0) revert InvalidAmount();
-       if (swappedQSD[msg.sender] + amount > allowedQSD[msg.sender]) revert ExceedsAllowance();
+       if (depositedQSD[msg.sender] + amount > allowedQSD[msg.sender]) revert ExceedsAllowance();
 
-        uint256 usdcAmount = (amount * QSD_RATE) / 1e6;
 
         QSD.safeTransferFrom(msg.sender, address(this), amount);
-        USDC.safeTransfer(msg.sender, usdcAmount);
 
-        swappedQSD[msg.sender] += amount;
+        depositedQSD[msg.sender] += amount;
 
-        emit Swapped(msg.sender, "QSD", amount, usdcAmount, block.timestamp);
+        emit Deposited(msg.sender, "QSD", amount, block.timestamp);
     }
 
-    function swapQRT(uint256 amount) external whenNotPaused {
+    function depositQRT(uint256 amount) external whenNotPaused {
         if (amount == 0) revert InvalidAmount();
-        if (swappedQRT[msg.sender] + amount > allowedQRT[msg.sender]) revert ExceedsAllowance();
-
-        uint256 usdcAmount = (amount * QRT_RATE) / 1e6;
+        if (depositedQRT[msg.sender] + amount > allowedQRT[msg.sender]) revert ExceedsAllowance();
 
         QRT.safeTransferFrom(msg.sender, address(this), amount);
-        USDC.safeTransfer(msg.sender, usdcAmount);
 
-        swappedQRT[msg.sender] += amount;
+        depositedQRT[msg.sender] += amount;
 
-        emit Swapped(msg.sender, "QRT", amount, usdcAmount, block.timestamp);
+        emit Deposited(msg.sender, "QRT", amount, block.timestamp);
     }
 
-    function emergencyWithdrawUSDC(uint256 amount) external onlyOwner  {
-        USDC.safeTransfer(owner(), amount);
-    }
+   function emergencyWithdrawLst() external onlyOwner {
+        uint256 qsdBalance = QSD.balanceOf(address(this));
+        uint256 qrtBalance = QRT.balanceOf(address(this));
+
+        if (qsdBalance > 0) {
+            QSD.safeTransfer(owner(), qsdBalance);
+        }
+        if (qrtBalance > 0) {
+            QRT.safeTransfer(owner(), qrtBalance);
+        }
+}
 
     function getRemainingQSD(address user) external view returns (uint256) {
-        return allowedQSD[user] - swappedQSD[user];
+        return allowedQSD[user] - depositedQSD[user];
     }
 
     function getRemainingQRT(address user) external view returns (uint256) {
-        return allowedQRT[user] - swappedQRT[user];
+        return allowedQRT[user] - depositedQRT[user];
     }
 }

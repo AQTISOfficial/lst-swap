@@ -1,4 +1,4 @@
-# AITA LST Swap Backend
+# AITA LST / Deposit Swap Backend
 
 This project contains the backend services for the LST Swap platform. It includes smart contracts, deployment scripts, and testing utilities.
 

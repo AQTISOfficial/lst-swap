@@ -4,8 +4,8 @@ dotenv.config();
 
 // === CONFIG ===
 const TOKEN_ADDRESS = process.env.QSD_ADDRESS!;             // QSD token address
-const SWAP_CONTRACT_ADDRESS = process.env.SWAP_CONTRACT!;   // SwapLst contract address
-const AMOUNT_TO_APPROVE = "3166451768"; // 1 token with 6 decimals
+const DEPOSIT_CONTRACT_ADDRESS = process.env.DEPOSIT_CONTRACT!;   // DepositLst contract address
+const AMOUNT_TO_APPROVE = "2105451768"; // 1 token with 6 decimals
 
 async function main() {
   const [signer] = await ethers.getSigners();
@@ -20,11 +20,11 @@ async function main() {
 
   const amount = ethers.parseUnits(AMOUNT_TO_APPROVE, 6);
 
-  const tx = await token.approve(SWAP_CONTRACT_ADDRESS, amount);
+  const tx = await token.approve(DEPOSIT_CONTRACT_ADDRESS, amount);
   console.log(`Approving ${AMOUNT_TO_APPROVE} tokens...`);
   await tx.wait();
 
-  console.log(`✅ Approved ${AMOUNT_TO_APPROVE} tokens for ${SWAP_CONTRACT_ADDRESS}`);
+  console.log(`✅ Approved ${AMOUNT_TO_APPROVE} tokens for ${DEPOSIT_CONTRACT_ADDRESS}`);
 }
 
 main().catch((error) => {
